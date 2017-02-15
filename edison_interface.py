@@ -27,7 +27,10 @@ def run_edison_interface():
             else:
                 s.equation.right, s.equation.left = s.apply_inverse(var, [s.equation.right, s.equation.left])
         else:
-            s.equation.left, s.equation.right = s.apply_inverse(var, [s.equation.left, s.equation.right])
+            if s.apply_inverse(var, [s.equation.left, s.equation.right]) == 'Variable not on the left':
+                s.equation.left, s.equation.right = s.apply_inverse(var, [s.equation.right, s.equation.left])
+            else:
+                s.equation.left, s.equation.right = s.apply_inverse(var, [s.equation.left, s.equation.right])
         if type(s.equation.left) == BinaryTree:
             s.equation.left = parser.evaluate_tree(s.equation.left)
         if type(s.equation.right) == BinaryTree:
