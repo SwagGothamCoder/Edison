@@ -4,11 +4,13 @@ from binary_tree import BinaryTree
 
 class Expression_Parser(object):
     def __init__(self):
-        self.operations = {'+': operator.add, '-': operator.sub, '*': operator.mul, '/': operator.truediv}
+        self.operations = {'+': operator.add, '-': operator.sub, '*': operator.mul, '/': operator.truediv, '^': operator.pow}
     
     def build_tree(self, expression, ops):
         while not all([type(b) == BinaryTree for b in expression]):
-            if '*' in expression or '/' in expression:
+            if '^' in expression:
+                ops = ['^']
+            elif '*' in expression or '/' in expression:
                 ops = ['*', '/']
             else:
                 ops = ['+', '-']
@@ -21,7 +23,9 @@ class Expression_Parser(object):
                         expression[idx-1] = BinaryTree(str(element), left, right)
                     elif type(left) == BinaryTree:
                         if ' ' in right:
-                            if '*' in right or '/' in right:
+                            if '^' in right:
+                                right = self.build_tree(list(right), ['^'])
+                            elif '*' in right or '/' in right:
                                 right = self.build_tree(list(right), ['*', '/'])
                             else:
                                 right = self.build_tree(list(right), ['+', '-'])
@@ -33,7 +37,9 @@ class Expression_Parser(object):
                             expression[idx-1] = BinaryTree(str(element), left, float(right))
                     elif type(right) == BinaryTree:
                         if ' ' in left:
-                            if '*' in left or '/' in left:
+                            if '^' in left:
+                                left = self.build_tree(list(left), ['^'])
+                            elif '*' in left or '/' in left:
                                 left = self.build_tree(list(left), ['*', '/'])
                             else:
                                 left = self.build_tree(list(left), ['+', '-'])
@@ -45,12 +51,16 @@ class Expression_Parser(object):
                             expression[idx-1] = BinaryTree(str(element), float(left), right)
                     else:
                         if ' ' in right:
-                            if '*' in right or '/' in right:
+                            if '^' in right:
+                                right = self.build_tree(list(right), ['^'])
+                            elif '*' in right or '/' in right:
                                 right = self.build_tree(list(right), ['*', '/'])
                             else:
                                 right = self.build_tree(list(right), ['+', '-'])
                         if ' ' in left:
-                            if '*' in left or '/' in left:
+                            if '^' in left:
+                                left = self.build_tree(list(left), ['^'])
+                            elif '*' in left or '/' in left:
                                 left = self.build_tree(list(left), ['*', '/'])
                             else:
                                 left = self.build_tree(list(left), ['+', '-'])

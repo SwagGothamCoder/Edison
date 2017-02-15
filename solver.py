@@ -5,7 +5,7 @@ class Solver(object):
         self.expression1 = expression1
         self.expression2 = expression2
         self.equation = BinaryTree('=', self.expression1, self.expression2)
-        self.inverses = {'+': '-', '-': '+', '*': '/', '/': '*'}
+        self.inverses = {'+': '-', '-': '+', '*': '/', '/': '*', '^': '^'}
     
     def contains_var(self, tree, var):
         var_present = False
@@ -24,7 +24,7 @@ class Solver(object):
         return var_present
     
     def apply_inverse(self, var, left_right_list):
-        special_ops = ['-', '/']
+        special_ops = ['-', '/', '^']
         left = left_right_list[0]
         right = left_right_list[1]
         if type(left) == float:
@@ -35,11 +35,17 @@ class Solver(object):
             if self.contains_var(left.left, var) and self.contains_var(left.right, var):
                 return 'Cannot undo any more'
             elif self.contains_var(left.left, var):
-                right = BinaryTree(op_inverse, right, left.right)
+                if op_inverse == '^':
+                    right = BinaryTree(op_inverse, right, BinaryTree('^', left.right, -1.0))
+                else:
+                    right = BinaryTree(op_inverse, right, left.right)
                 left = left.left
             elif self.contains_var(left.right, var):
                 if left.root in special_ops:
-                    right = BinaryTree(op_inverse, right, left.right)
+                    if op_inverse == '^':
+                        right = BinaryTree(op_inverse, right, BinaryTree('^', left.right, -1.0))
+                    else:
+                        right = BinaryTree(op_inverse, right, left.right)
                     left = left.left
                 else:
                     right = BinaryTree(op_inverse, right, left.left)
@@ -50,11 +56,17 @@ class Solver(object):
             if left.right == var and self.contains_var(left.left, var):
                 return 'Cannot undo any more'
             elif self.contains_var(left.left, var):
-                right = BinaryTree(op_inverse, right, left.right)
+                if op_inverse == '^':
+                    right = BinaryTree(op_inverse, right, BinaryTree('^', left.right, -1.0))
+                else:
+                    right = BinaryTree(op_inverse, right, left.right)
                 left = left.left
             elif left.right == var:
                 if left.root in special_ops:
-                    right = BinaryTree(op_inverse, right, left.right)
+                    if op_inverse == '^':
+                        right = BinaryTree(op_inverse, right, BinaryTree('^', left.right, -1.0))
+                    else:
+                        right = BinaryTree(op_inverse, right, left.right)
                     left = left.left
                 else:
                     right = BinaryTree(op_inverse, right, left.left)
@@ -66,13 +78,19 @@ class Solver(object):
                 return 'Cannot undo any more'
             elif self.contains_var(left.right, var):
                 if left.root in special_ops:
-                    right = BinaryTree(op_inverse, right, left.right)
+                    if op_inverse == '^':
+                        right = BinaryTree(op_inverse, right, BinaryTree('^', left.right, -1.0))
+                    else:
+                        right = BinaryTree(op_inverse, right, left.right)
                     left = left.left
                 else:
                     right = BinaryTree(op_inverse, right, left.left)
                     left = left.right
             elif left.left == var:
-                right = BinaryTree(op_inverse, right, left.right)
+                if op_inverse == '^':
+                    right = BinaryTree(op_inverse, right, BinaryTree('^', left.right, -1.0))
+                else:
+                    right = BinaryTree(op_inverse, right, left.right)
                 left = left.left
             else:
                 return 'Variable not on the left'
@@ -80,11 +98,17 @@ class Solver(object):
             if left.left == var and left.right == var:
                 return 'Cannot undo any more'
             elif left.left == var:
-                right = BinaryTree(op_inverse, right, left.right)
+                if op_inverse == '^':
+                    right = BinaryTree(op_inverse, right, BinaryTree('^', left.right, -1.0))
+                else:
+                    right = BinaryTree(op_inverse, right, left.right)
                 left = left.left
             elif left.right == var:
                 if left.root in special_ops:
-                    right = BinaryTree(op_inverse, right, left.right)
+                    if op_inverse == '^':
+                        right = BinaryTree(op_inverse, right, BinaryTree('^', left.right, -1.0))
+                    else:
+                        right = BinaryTree(op_inverse, right, left.right)
                     left = left.left
                 else:
                     right = BinaryTree(op_inverse, right, left.left)
